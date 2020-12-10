@@ -2,17 +2,13 @@ from django.db import models
 import datetime
 
 
-class Event:
+class Event(models.Model):
 
     name = models.TextField()
-    date_time = models.DateTimeField()
-
-    def __init__(self):
-        self.name = ''
-        self.date_time = ''
+    date_time = models.DateTimeField(auto_now=False)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.date_time})"
 
     def add(self, name, date_time):
         self.name = name
