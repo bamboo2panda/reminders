@@ -144,9 +144,42 @@ function App() {
   };
 
 // Edit Dialog
+
+  const [currentReminderText, setCurrentReminderText] = React.useState('');  
+  const [currentReminderDate, setCurrentReminderDate] = React.useState('');
+  
   const handleClickOpenEdit = (event) => {
+    const cr = events.find((e) => e.id === activeEventID);
+    setCurrentReminderText(cr.name);
+    setCurrentReminderDate(cr.date_time);
     setOpenDialogEditEvent(true);
   };
+
+  const handlecurrentReminderDateChange = (date) => {
+    setCurrentReminderDate(date);
+  };
+
+  const handleClickEdit = () => {
+    axios({
+      method: 'patch',
+      url: `http://0.0.0.0:8000/api/event/${activeEventID}`,
+      headers: {'X-Requested-With': 'XMLHttpRequest',
+                 'X-CSRFToken': csrftoken
+                },
+      data: {
+        name: currentReminderText,
+        date_time: currentReminderDate
+      }
+      })
+      .then(() => {
+        updateEventsList(setEvents);
+        setOpenDialogAddEvent(false);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+  }
 
   const handleClickCloseEdit = (event) => {
     setOpenDialogEditEvent(false);
@@ -321,8 +354,8 @@ function App() {
               id="date-picker-dialog"
               label="Date picker dialog"
               format="MM/dd/yyyy"
-              value={selectedAddDate}
-              onChange={handleDateChange}
+              value={currentReminderDate}
+              onChange={handlecurrentReminderDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
               }}
@@ -331,8 +364,8 @@ function App() {
               margin="normal"
               id="time-picker"
               label="Time picker"
-              value={selectedAddDate}
-              onChange={handleDateChange}
+              value={currentReminderDate}
+              onChange={handlecurrentReminderDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change time',
               }}
@@ -340,7 +373,7 @@ function App() {
           </Grid>
           </MuiPickersUtilsProvider>
           <Typography align="right" className={classes.root}>
-            <Button onClick={handleClickAdd} color="secondary">
+            <Button onClick={handleClickEdit} color="secondary">
               ADD
             </Button>
           </Typography>

@@ -125,3 +125,10 @@ STATIC_ROOT = BASE_DIR / 'static'
 STATICFILES_DIRS = (
     (BASE_DIR / 'schedule-ui/build/static'),
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
+}
+
