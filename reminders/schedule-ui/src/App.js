@@ -155,6 +155,11 @@ function App() {
     setOpenDialogEditEvent(true);
   };
 
+
+  const handlecurrentReminderTextChange = (text) => {
+    setCurrentReminderText(text.currentTarget.value);
+  };
+
   const handlecurrentReminderDateChange = (date) => {
     setCurrentReminderDate(date);
   };
@@ -162,7 +167,7 @@ function App() {
   const handleClickEdit = () => {
     axios({
       method: 'patch',
-      url: `http://0.0.0.0:8000/api/event/${activeEventID}`,
+      url: `http://0.0.0.0:8000/api/event/${activeEventID}/`,
       headers: {'X-Requested-With': 'XMLHttpRequest',
                  'X-CSRFToken': csrftoken
                 },
@@ -174,6 +179,8 @@ function App() {
       .then(() => {
         updateEventsList(setEvents);
         setOpenDialogAddEvent(false);
+        setOpenDialogEditEvent(false);
+
       })
       .catch(function (error) {
         // handle error
@@ -194,7 +201,7 @@ function App() {
   };
 
   const handleAddReminderTextChange = (text) => {
-    setAddReminderText(text.currentTarget.value)
+    setAddReminderText(text.currentTarget.value);
     console.log(addReminderText);
   };
 
@@ -346,6 +353,8 @@ function App() {
             label="Reminder text"
             type="text"
             fullWidth
+            value={currentReminderText}
+            onChange={handlecurrentReminderTextChange}
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Grid container justify="space-around">
@@ -374,7 +383,7 @@ function App() {
           </MuiPickersUtilsProvider>
           <Typography align="right" className={classes.root}>
             <Button onClick={handleClickEdit} color="secondary">
-              ADD
+              EDIT
             </Button>
           </Typography>
         </DialogContent>
