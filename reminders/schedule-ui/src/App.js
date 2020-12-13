@@ -11,7 +11,7 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-
+import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -37,6 +37,7 @@ import Link from '@material-ui/core/Link';
 import { createMuiTheme, MuiThemeProvider} from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import green from '@material-ui/core/colors/green';
+import Cookies from 'js-cookie';
 
 const useStyles = makeStyles((theme) => ({
   text: {
@@ -75,39 +76,47 @@ const theme = createMuiTheme({
   },
 });
 
+let activeEventID = "";
+
 function App() {
 
-    const [events, setEvents] = useState([])
+    const [events, setEvents] = useState([]);
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [openDialogAddEvent, setOpenDialogAddEvent] = React.useState(false);
+    const [openDialogEditEvent, setOpenDialogEditEvent] = React.useState(false);
+
 
     const handleExpandClick = () => {
     setExpanded(!expanded);
     };
+    const csrftoken = Cookies.get('csrftoken');
 
-
-    useEffect(() => {
+    const updateEvents = useEffect(() => {
         axios({
             method: "GET",
             url: "http://0.0.0.0:8000/api/event/"
         }).then(response => {
-            setEvents(response.data)
+            setEvents(response.data);
         })
-    }, [])
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        });
+    }, []);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const [openDialogAddEvent, setOpenDialogAddEvent] = React.useState(false);
-  const [openDialogEditEvent, setOpenDialogEditEvent] = React.useState(false);
-
+  
 // ActionsPopover
-  const handleClickOpenPopover = (event) => {
+  const handleClickOpenPopover = (event, id) => {
     setAnchorEl(event.currentTarget);
+    console.log(id);
+    activeEventID = id;
   };
 
 // Add Dialog
   const handleClickOpenAdd = (event) => {
-    setOpenDialogAddEvent(true)
+    setOpenDialogAddEvent(true);
   };
   const handleClickCloseAdd = () => {
     setOpenDialogAddEvent(false);
@@ -116,9 +125,26 @@ function App() {
     setOpenDialogAddEvent(false);
   };
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 // Remove
-  const handleClickRemove = (event) => {
-
+  const handleClickRemove = () => {
+    axios.delete(`http://0.0.0.0:8000/api/event/${activeEventID}`, 
+            {headers: {'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': csrftoken
+                      },
+                    })
+      .then(() => {
+        handleClose();
+        updateEventsList(setEvents);
+        console.log(`Deleted ${activeEventID}`);
+        console.log (events);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
   };
 
 // Edit Dialog
@@ -139,11 +165,12 @@ function App() {
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+ 
 
+  console.log(events);
+  console.log(activeEventID);
   return (
+  <Container maxWidth="md">
   <MuiThemeProvider theme={theme}>
     <React.Fragment>
          <AppBar position="fixed" color="primary" className={classes.appBar}>
@@ -157,21 +184,21 @@ function App() {
       </AppBar>
       <Paper square className={classes.paper}>
         <List className={classes.list}>
-          {events.map(({ id, primary, event_date, event_time }) => (
+          {events.map(({ id, name, date_time }) => (
             <React.Fragment key={id}>
               <ListItem>
                 <ListItemText
-                  primary={primary}
+                  primary={name + ' ' + id}
                   secondary={
                     <React.Fragment>
                       <TodayIcon fontSize="small"/>
-                          {" " + event_date + " "}
+                          {" " + date_time + " "}
                       <AccessAlarmIcon fontSize="small"/>
-                        {" " + event_time + " "}
+                        {" " + date_time + " "}
                     </React.Fragment>
                   }
                 />
-                <ExpandMoreIcon onClick={handleClickOpenPopover}/>
+                <ExpandMoreIcon onClick={(event) => {handleClickOpenPopover(event, id)}}/>
                 <Popover
                   id={id}
                   open={openPopover}
@@ -297,7 +324,17 @@ function App() {
 
     </React.Fragment>
     </MuiThemeProvider>
+    </Container>
   );
 }
 
 export default App;
+function updateEventsList(setEvents) {
+  axios({
+    method: "GET",
+    url: "http://0.0.0.0:8000/api/event/"
+  }).then(response => {
+    setEvents(response.data);
+  });
+}
+
