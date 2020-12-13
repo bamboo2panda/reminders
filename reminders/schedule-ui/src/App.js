@@ -76,7 +76,6 @@ const theme = createMuiTheme({
   },
 });
 
-let activeEventID = "";
 
 function App() {
 
@@ -86,7 +85,7 @@ function App() {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [openDialogAddEvent, setOpenDialogAddEvent] = React.useState(false);
     const [openDialogEditEvent, setOpenDialogEditEvent] = React.useState(false);
-
+    const [activeEventID, setActiveEventID] = React.useState('');
 
     const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -111,7 +110,7 @@ function App() {
   const handleClickOpenPopover = (event, id) => {
     setAnchorEl(event.currentTarget);
     console.log(id);
-    activeEventID = id;
+    setActiveEventID(id);
   };
 
 // Add Dialog
@@ -187,7 +186,6 @@ function App() {
         // handle error
         console.log(error);
       });
-    
   };
 
   const openPopover = Boolean(anchorEl);
