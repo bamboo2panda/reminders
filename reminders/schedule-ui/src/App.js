@@ -121,9 +121,6 @@ function App() {
   const handleClickCloseAdd = () => {
     setOpenDialogAddEvent(false);
   };
-  const handleClickAdd = () => {
-    setOpenDialogAddEvent(false);
-  };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -156,17 +153,48 @@ function App() {
     setOpenDialogEditEvent(false);
   };
 
-  const [selectedDate, setSelectedDate] = React.useState(new Date('2014-08-18T21:11:54'));
+  //Add new form
+  const [selectedAddDate, setSelectedDate] = React.useState(new Date());
+  const [addReminderText, setAddReminderText] = React.useState("");
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleAddReminderTextChange = (text) => {
+    setAddReminderText(text.currentTarget.value)
+    console.log(addReminderText);
+  };
+
+  const handleClickAdd = (event) => {
+    axios({
+      method: 'post',
+      url: 'http://0.0.0.0:8000/api/event/',
+      headers: {'X-Requested-With': 'XMLHttpRequest',
+                 'X-CSRFToken': csrftoken
+                },
+      data: {
+        name: addReminderText,
+        date_time: selectedAddDate
+      }
+      })
+      .then(() => {
+        updateEventsList(setEvents);
+        setOpenDialogAddEvent(false);
+        console.log(event);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
+    
   };
 
   const openPopover = Boolean(anchorEl);
   const id = openPopover ? 'simple-popover' : undefined;
 
  
-
+  
   console.log(events);
   console.log(activeEventID);
   return (
@@ -237,6 +265,8 @@ function App() {
             id="reminder_text"
             label="Reminder text"
             type="text"
+            value={addReminderText}
+            onChange={handleAddReminderTextChange}
             fullWidth
           />
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -246,7 +276,7 @@ function App() {
               id="date-picker-dialog"
               label="Date picker dialog"
               format="MM/dd/yyyy"
-              value={selectedDate}
+              value={selectedAddDate}
               onChange={handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
@@ -256,7 +286,7 @@ function App() {
               margin="normal"
               id="time-picker"
               label="Time picker"
-              value={selectedDate}
+              value={selectedAddDate}
               onChange={handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change time',
@@ -293,7 +323,7 @@ function App() {
               id="date-picker-dialog"
               label="Date picker dialog"
               format="MM/dd/yyyy"
-              value={selectedDate}
+              value={selectedAddDate}
               onChange={handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change date',
@@ -303,7 +333,7 @@ function App() {
               margin="normal"
               id="time-picker"
               label="Time picker"
-              value={selectedDate}
+              value={selectedAddDate}
               onChange={handleDateChange}
               KeyboardButtonProps={{
                 'aria-label': 'change time',
@@ -335,6 +365,6 @@ function updateEventsList(setEvents) {
     url: "http://0.0.0.0:8000/api/event/"
   }).then(response => {
     setEvents(response.data);
-  });
+  }, []);
 }
 
