@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 
 .idea/
+/reminders/db.celery.sqlite3

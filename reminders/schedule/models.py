@@ -2,6 +2,10 @@ from django.db import models
 import datetime
 
 
+def mail_reminder():
+    print('remind me!')
+
+
 class Event(models.Model):
 
     name = models.TextField()
@@ -19,3 +23,4 @@ class Event(models.Model):
         date_time_str = d + ' ' + t
         date_time = datetime.datetime.strptime(date_time_str, '%d/%m/%Y %I:%M %p')
         return str(date_time)
+

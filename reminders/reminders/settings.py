@@ -132,3 +132,7 @@ REST_FRAMEWORK = {
     ]
 }
 
+
+CELERY_BROKER_URL = 'sqla+sqlite:///db.celery.sqlite3'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
