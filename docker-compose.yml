@@ -8,5 +8,4 @@ services:
     volumes:
       - ./reminders:/reminders
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
-      sh -c "celery -A reminders worker -B"
+      sh -c "python manage.py runserver 0.0.0.0:8000 && celery -A reminders worker -B"

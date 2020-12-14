@@ -1,9 +1,4 @@
 from django.db import models
-import datetime
-
-
-def mail_reminder():
-    print('remind me!')
 
 
 class Event(models.Model):

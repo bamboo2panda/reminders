@@ -254,13 +254,13 @@ function App() {
             <React.Fragment key={id}>
               <ListItem>
                 <ListItemText
-                  primary={name + ' ' + id}
+                  primary={name}
                   secondary={
                     <React.Fragment>
                       <TodayIcon fontSize="small"/>
-                          {" " + date_time + " "}
+                          {" " + new Date(date_time).toLocaleDateString('en-US') + " "}
                       <AccessAlarmIcon fontSize="small"/>
-                        {" " + date_time + " "}
+                        {" " + new Date(date_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true}) + " "}
                     </React.Fragment>
                   }
                 />

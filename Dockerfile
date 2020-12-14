@@ -24,3 +24,5 @@ RUN npm --version
 WORKDIR /reminders/schedule-ui
 RUN npm install
 RUN npm run build
+
+WORKDIR /reminders
