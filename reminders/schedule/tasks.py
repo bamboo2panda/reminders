@@ -9,12 +9,17 @@ import pytz
 
 
 @shared_task
+def print_test():
+    print("This is test task!")
+    print(datetime.datetime.now())
+
+
+@shared_task
 def remind_by_mail():
     utc = pytz.UTC
     now = datetime.datetime.now()
     now_plus_30_sec = utc.localize(now + datetime.timedelta(seconds=30))
     now_minus_30_sec = utc.localize(now + datetime.timedelta(seconds=-30))
-
     events = Event.objects.all()
 
     for event in events:

@@ -1,11 +1,21 @@
 version: "3.9"
 services:
+  celery: &base_config
+    networks:
+      - renet
+    build: reminders
+    command: celery -A reminders worker -B
   reminders:
-    build:
-      context: .
+    <<: *base_config
     ports:
       - "8000:8000"
-    volumes:
-      - ./reminders:/reminders
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000 && celery -A reminders worker -B"
+    command: python manage.py runserver 0.0.0.0:8000
+  redis:
+    image: redis:alpine
+    networks:
+      - renet
+volumes:
+  reminders:
+networks:
+  renet:
+    driver: bridge

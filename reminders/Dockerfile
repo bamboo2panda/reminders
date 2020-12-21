@@ -3,12 +3,12 @@ MAINTAINER bamboo2panda
 
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip install -r /requirements.txt
 
 RUN mkdir /reminders
 WORKDIR /reminders
-COPY ./reminders /reminders
+COPY . /reminders
 
 ENV NODE_VERSION=14.15.1
 RUN apt install -y curl
@@ -21,8 +21,7 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN node --version
 RUN npm --version
 
-WORKDIR /reminders/schedule-ui
+WORKDIR /reminders/screens
 RUN npm install
 RUN npm run build
 
-WORKDIR /reminders

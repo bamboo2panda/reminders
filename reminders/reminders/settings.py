@@ -26,7 +26,7 @@ SECRET_KEY = 'j#nk*onx5tu!r^lw@-ox-yflx)@0w5i4ji1piil*ln54owyjs&'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', 'redis']
 
 
 # Application definition
@@ -57,7 +57,7 @@ ROOT_URLCONF = 'reminders.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'schedule-ui/build'],
+        'DIRS': [BASE_DIR / 'screens/build'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,7 +124,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_DIRS = (
-    (BASE_DIR / 'schedule-ui/build/static'),
+    (BASE_DIR / 'screens/build/static'),
 )
 
 REST_FRAMEWORK = {
@@ -133,11 +133,11 @@ REST_FRAMEWORK = {
     ]
 }
 
-
-CELERY_BROKER_URL = 'sqla+sqlite:///db.celery.sqlite3'
-CELERY_ACCEPT_CONTENT = ['json']
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
-
+CELERY_RESULT_SERIALIZER = 'json'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.getenv("EMAIL_HOST")
